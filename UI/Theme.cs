@@ -10,18 +10,38 @@ namespace StickyNotes.UI
 {
 
 
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+
     public static class Theme
     {
-        public static readonly Color Bg = Color.FromArgb(250, 249, 246);
-        public static readonly Color Surface = Color.White;
-        public static readonly Color Primary = Color.FromArgb(66, 133, 244);
-        public static readonly Color PrimarySoft = Color.FromArgb(232, 240, 254);
-        public static readonly Color Danger = Color.FromArgb(217, 48, 37);
-        public static readonly Color TextMain = Color.FromArgb(32, 33, 36);
-        public static readonly Color TextSub = Color.FromArgb(128, 134, 139);
-        public static readonly Color Divider = Color.FromArgb(230, 228, 224);
-        public static readonly Color Hover = Color.FromArgb(240, 240, 240);
-        public static readonly Color TitleBar = Color.FromArgb(252, 251, 248);
+        // 底色：暖米黄
+        public static readonly Color Bg = Color.FromArgb(250, 243, 232);
+        // 卡片：奶白
+        public static readonly Color Surface = Color.FromArgb(255, 252, 247);
+        // 顶部栏：暖米
+        public static readonly Color TitleBar = Color.FromArgb(244, 234, 220);
+        // 分割线：暖褐灰
+        public static readonly Color Divider = Color.FromArgb(226, 212, 194);
+        // 悬停：暖米加深
+        public static readonly Color Hover = Color.FromArgb(244, 232, 218);
+
+        // 主色：柔和珊瑚橘
+        public static readonly Color Primary = Color.FromArgb(230, 126, 96);
+        // 选中浅底：蜜桃
+        public static readonly Color PrimarySoft = Color.FromArgb(253, 232, 222);
+        // 危险：暖红
+        public static readonly Color Danger = Color.FromArgb(200, 92, 78);
+
+        // 辅助绿：低饱和的鼠尾草绿，温和不刺眼
+        public static readonly Color Accent = Color.FromArgb(122, 160, 126);
+        // 绿的浅底：淡薄荷米
+        public static readonly Color AccentSoft = Color.FromArgb(232, 242, 231);
+
+        // 文字：暖褐黑
+        public static readonly Color TextMain = Color.FromArgb(74, 58, 46);
+        // 次要文字：暖灰褐
+        public static readonly Color TextSub = Color.FromArgb(156, 136, 118);
 
         public static readonly Font FontTitle = new("Microsoft YaHei UI", 11f, FontStyle.Bold);
         public static readonly Font FontBody = new("Microsoft YaHei UI", 10f);

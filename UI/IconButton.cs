@@ -14,6 +14,8 @@ namespace StickyNotes.UI
         public string Glyph { get; set; } = "";
         public Color GlyphColor { get; set; } = Theme.TextMain;
         public bool Active { get; set; }
+        public Color ActiveColor { get; internal set; }
+
         private bool _hover;
 
         public IconButton()

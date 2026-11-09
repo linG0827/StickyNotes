@@ -4,7 +4,6 @@ using System.Text.Json;
 
 namespace StickyNotes.Store
 {
-   
 
     public static class NoteStore
     {
@@ -12,6 +11,8 @@ namespace StickyNotes.Store
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MyStickies");
         private static readonly string FilePath = Path.Combine(Dir, "data.json");
         private static readonly string TempPath = FilePath + ".tmp";
+
+        public static string DataDir => Dir;
 
         private static readonly JsonSerializerOptions Opt = new()
         {
@@ -33,10 +34,7 @@ namespace StickyNotes.Store
                 var json = File.ReadAllText(FilePath);
                 return JsonSerializer.Deserialize<Root>(json, Opt) ?? new Root();
             }
-            catch
-            {
-                return new Root();
-            }
+            catch { return new Root(); }
         }
 
         public static void Save(Root root)
@@ -49,10 +47,7 @@ namespace StickyNotes.Store
                 if (File.Exists(FilePath)) File.Delete(FilePath);
                 File.Move(TempPath, FilePath);
             }
-            catch
-            {
-                // 写失败不打断用户
-            }
+            catch { }
         }
     }
 }

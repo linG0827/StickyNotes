@@ -5,6 +5,7 @@ using StickyNotes.UI;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
+
 public class MainForm : Form
 {
     // ===== 数据 =====
@@ -157,7 +158,7 @@ public class MainForm : Form
             e.Graphics.DrawLine(pen, 0, bar.Height - 1, bar.Width, bar.Height - 1);
         };
 
-        pinBtn = new IconButton { Glyph = "📌", Dock = DockStyle.Right };
+        pinBtn = new IconButton { Glyph = "📌", Dock = DockStyle.Right, ActiveColor = Theme.AccentSoft };
         pinBtn.Click += (_, _) => ToggleTopMost();
         bar.Controls.Add(pinBtn);
 
@@ -189,7 +190,7 @@ public class MainForm : Form
     }
 
     // =========================================================
-    // 列表页：先加 Fill 内容，再加 Top 栏
+    // 列表页
     // =========================================================
     private void BuildListPage()
     {
@@ -215,19 +216,34 @@ public class MainForm : Form
         var btnClose = MakeCloseButton();
         var btnNew = MakeNewButton();
 
-        // Dock=Right 先加靠最右：✕ → ＋ → 📌
-        bar.Controls.Add(btnClose);
-        bar.Controls.Add(btnNew);
-        bar.Controls.Add(new Label
+        // 标题 Label + 右键菜单
+        var lblTitle = new Label
         {
-            Text = "My_Notes",
+            Text = "我的便签",
             Dock = DockStyle.Left,
             Width = 120,
             TextAlign = ContentAlignment.MiddleLeft,
-            Padding = new Padding(14, 0, 0, 0),
+            Padding = new Padding(24, 0, 0, 0),
             Font = Theme.FontTitle,
             ForeColor = Theme.TextMain
-        });
+        };
+        lblTitle.Paint += (_, e) =>
+        {
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            using var b = new SolidBrush(Theme.Accent);
+            e.Graphics.FillEllipse(b, 12, lblTitle.Height / 2 - 3, 6, 6);
+        };
+
+        var titleMenu = new ContextMenuStrip();
+        var miOpenFolder = new ToolStripMenuItem("打开数据文件夹");
+        miOpenFolder.Click += (_, _) => OpenDataFolder();
+        titleMenu.Items.Add(miOpenFolder);
+        lblTitle.ContextMenuStrip = titleMenu;
+
+        // Dock=Right 先加靠最右：✕ → ＋ → 📌
+        bar.Controls.Add(btnClose);
+        bar.Controls.Add(btnNew);
+        bar.Controls.Add(lblTitle);
 
         _listPage.Controls.Add(_cardList);
         _listPage.Controls.Add(_lblEmpty);
@@ -243,7 +259,7 @@ public class MainForm : Form
     }
 
     // =========================================================
-    // 详情页：Fill → Top(TitleBox) → Top(Bar)
+    // 详情页
     // =========================================================
     private void BuildDetailPage()
     {
@@ -259,7 +275,7 @@ public class MainForm : Form
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             var r = new Rectangle(10, 4, _titleBox.Width - 21, _titleBox.Height - 9);
-            using var path = Theme.RoundRect(r, 10);
+            using var path = Theme.RoundRect(r, 12);
             using var b = new SolidBrush(Theme.Surface);
             e.Graphics.FillPath(b, path);
         };
@@ -285,7 +301,7 @@ public class MainForm : Form
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             var r = new Rectangle(10, 0, _editorBox.Width - 21, _editorBox.Height - 11);
-            using var path = Theme.RoundRect(r, 10);
+            using var path = Theme.RoundRect(r, 12);
             using var b = new SolidBrush(Theme.Surface);
             e.Graphics.FillPath(b, path);
         };
@@ -314,14 +330,13 @@ public class MainForm : Form
         var btnClose = MakeCloseButton();
         var btnBack = MakeBackButton();
 
-        // Dock=Right 先加靠最右：✕ → 🗑 → 📌
         bar.Controls.Add(btnClose);
         bar.Controls.Add(btnDelete);
         bar.Controls.Add(btnBack);
 
-        _detailPage.Controls.Add(_editorBox);   // Fill
-        _detailPage.Controls.Add(_titleBox);    // Top，在 bar 下方
-        _detailPage.Controls.Add(bar);          // Top，最顶部
+        _detailPage.Controls.Add(_editorBox);
+        _detailPage.Controls.Add(_titleBox);
+        _detailPage.Controls.Add(bar);
     }
 
     // =========================================================
@@ -479,6 +494,27 @@ public class MainForm : Form
         int w = Math.Max(MinimumSize.Width, _resizeStartSize.Width + (p.X - _resizeStart.X));
         int h = Math.Max(MinimumSize.Height, _resizeStartSize.Height + (p.Y - _resizeStart.Y));
         Size = new Size(w, h);
+    }
+
+    // =========================================================
+    // 打开数据文件夹
+    // =========================================================
+    private void OpenDataFolder()
+    {
+        try
+        {
+            Directory.CreateDirectory(NoteStore.DataDir);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = NoteStore.DataDir,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, "无法打开数据文件夹：\n" + ex.Message,
+                "打开失败", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
     }
 
     // =========================================================
